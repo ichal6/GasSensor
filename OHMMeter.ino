@@ -10,8 +10,8 @@ float R_sensor=0;       //value of unknown resistance
 int a2d_data=0;    
 float buffer=0;
 float value_percent = 0;
-float max_value = 89;
-float min_value = 2;
+float max_value = 89.91;
+float min_value = 1.93;
 float range_value = max_value - min_value;
 
 void setup() 
@@ -33,7 +33,7 @@ void loop()
     ///Serial.print("buffer = "); 
     //Serial.println(buffer);
     R_sensor=R_reference*buffer; // calculate unknown R2 from Ohm rule
-    value_percent = (R_sensor/range_value)*100;
+    value_percent = ((R_sensor-min_value)/range_value)*100;
     lcd.setCursor(4,0);
     lcd.print("ohm meter");
 
