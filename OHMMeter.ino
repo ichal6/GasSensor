@@ -14,23 +14,21 @@ float value_percent = 0;
 float max_value = 89.91;
 float min_value = 1.93;
 float range_value = max_value - min_value;
-int sensorVal = 0;
+int sensorVal = LOW;
 
 void setup() 
 {
  lcd.init();
  lcd.backlight(); //turn on backlight
  Serial.begin(9600); //start communication via UART with speed 9600 baud/sec (symbols/seconds)
- //konfiguracja pinu3 jako wejście i aktywowanie wbudowanego rezystora podciągającego
- pinMode(3, INPUT_PULLUP);
+ pinMode(3, INPUT_PULLUP); //configure pin 3 as an output and active built in pull up resistor
+ pinMode(13, OUTPUT); //configure built in LED on board Arduino UNO
 }
 
 void loop()
 {
-  sensorVal = digitalRead(3);   //odczytanie stanu przycisku i przypisanie go do zmiennej sensorVal
   a2d_data=analogRead(A0); // READ data from analog A0 port (0 - 1023)
-  Serial.println(sensorVal);     //przesłanie odczytanej wartości zmiennej sensorVal do portu szeregowego
-   
+     
   if(a2d_data)
   {
     buffer=a2d_data*Vin;
@@ -41,16 +39,19 @@ void loop()
     //Serial.println(buffer);
     R_sensor=R_reference*buffer; // calculate unknown R2 from Ohm rule
     value_percent = ((R_sensor-min_value)/range_value)*100; //calculate actual fuel in percent
-    // Należy pamiętać, że po aktywacji pull-up logika przycisku jest odwrócona
-  // Jeśli przycisk jest nie naciśnięty to jego stan jest wysoki (HIGH),
-  // a stan niski (LOW) kiedy jest naciśnięty. Dioda będzie zapalona kiedy przycisk
-  // zostanie naciśnięty:
-    if (sensorVal == LOW) {
+    Serial.println(R_sensor);
+    
+    if( value_percent <= 8){
+      digitalWrite(13, HIGH);
+      lcd.setCursor(3,0);
+      lcd.print("LOW FUEL!!!");
+    } else{
+      digitalWrite(13, LOW);
+    }
+    
+    if (sensorVal == LOW) { // LOW = don't push button
       lcd.backlight();
-      lcd.clear();
-      lcd.setCursor(4,0);
-      lcd.print("ohm meter");
-  
+        
       lcd.setCursor(4,1);
       lcd.print(round(value_percent));
       lcd.print("\% FUEL");
@@ -59,7 +60,8 @@ void loop()
       lcd.noBacklight();
     }
     delay(300);
-    
-    Serial.println(R_sensor);
+    lcd.clear();
   }
+  sensorVal = digitalRead(3); //read button status
+  Serial.println(sensorVal);
 }
