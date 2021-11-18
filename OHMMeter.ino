@@ -1,6 +1,7 @@
 
 #include <Wire.h> // Library for I2C communication
 #include <LiquidCrystal_I2C.h>
+#include <math.h>
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
 
 int Vin=5;        //voltage at 5V pin of arduino
@@ -39,7 +40,8 @@ void loop()
 
     lcd.setCursor(0,1);
     lcd.print("R (ohm) = ");
-    lcd.print(value_percent);
+    lcd.print(round(value_percent));
+    lcd.print("\%");
     Serial.println(R_sensor);
     delay(3000);
     //lcd.noBacklight();
