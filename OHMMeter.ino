@@ -35,6 +35,7 @@ void loop()
     //Serial.println(buffer);
     R_sensor=R_reference*buffer; // calculate unknown R2 from Ohm rule
     value_percent = ((R_sensor-min_value)/range_value)*100;
+    lcd.clear();
     lcd.setCursor(4,0);
     lcd.print("ohm meter");
 
