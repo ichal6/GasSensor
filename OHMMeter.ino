@@ -39,10 +39,9 @@ void loop()
     lcd.setCursor(4,0);
     lcd.print("ohm meter");
 
-    lcd.setCursor(0,1);
-    lcd.print("R (ohm) = ");
+    lcd.setCursor(4,1);
     lcd.print(round(value_percent));
-    lcd.print("\%");
+    lcd.print("\% FUEL");
     Serial.println(R_sensor);
     delay(3000);
     //lcd.noBacklight();
