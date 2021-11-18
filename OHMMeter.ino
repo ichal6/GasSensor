@@ -14,7 +14,10 @@ float value_percent = 0;
 float max_value = 89.91;
 float min_value = 1.93;
 float range_value = max_value - min_value;
+float last_val = 30;
 int sensorVal = LOW;
+unsigned long prev = 0;
+float actual_expenditure = 0;
 
 void setup() 
 {
@@ -23,6 +26,7 @@ void setup()
  Serial.begin(9600); //start communication via UART with speed 9600 baud/sec (symbols/seconds)
  pinMode(3, INPUT_PULLUP); //configure pin 3 as an output and active built in pull up resistor
  pinMode(13, OUTPUT); //configure built in LED on board Arduino UNO
+ prev = millis();
 }
 
 void loop()
@@ -47,6 +51,9 @@ void loop()
       lcd.print("LOW FUEL!!!");
     } else{
       digitalWrite(13, LOW);
+      lcd.setCursor(3,0);
+      lcd.print("FUEL USE ");
+      lcd.print(actual_expenditure);
     }
     
     if (sensorVal == LOW) { // LOW = don't push button
@@ -64,4 +71,14 @@ void loop()
   }
   sensorVal = digitalRead(3); //read button status
   Serial.println(sensorVal);
+
+  unsigned long now = millis();
+
+  if((now - prev)/1000 >= 20){
+    actual_expenditure = (last_val - R_sensor);
+    Serial.print("Aktualne zuzycie: ");
+    Serial.println(actual_expenditure);
+    prev = now;
+    last_val = R_sensor;
+  }
 }
