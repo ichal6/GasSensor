@@ -18,6 +18,7 @@ float last_val = 30;
 int sensorVal = LOW;
 unsigned long prev = 0;
 float actual_expenditure = 0;
+int LED_PIN = 8;
 
 void setup() 
 {
@@ -25,7 +26,7 @@ void setup()
  lcd.backlight(); //turn on backlight
  Serial.begin(9600); //start communication via UART with speed 9600 baud/sec (symbols/seconds)
  pinMode(3, INPUT_PULLUP); //configure pin 3 as an output and active built in pull up resistor
- pinMode(13, OUTPUT); //configure built in LED on board Arduino UNO
+ pinMode(LED_PIN, OUTPUT); //configure built in LED on board Arduino UNO
  prev = millis();
 }
 
@@ -46,11 +47,11 @@ void loop()
     Serial.println(R_sensor);
     
     if( value_percent <= 8){
-      digitalWrite(13, HIGH);
+      digitalWrite(LED_PIN, HIGH);
       lcd.setCursor(3,0);
       lcd.print("LOW FUEL!!!");
     } else{
-      digitalWrite(13, LOW);
+      digitalWrite(LED_PIN, LOW);
       lcd.setCursor(3,0);
       lcd.print("FUEL USE ");
       lcd.print(actual_expenditure);
