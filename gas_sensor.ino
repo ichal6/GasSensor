@@ -20,7 +20,7 @@ unsigned long prev = 0;
 float actual_expenditure = 0;
 int LED_PIN = 8;
 float last_expenditure = 0;
-
+int SIZE_TANK = 32; // size of tank in liters
 
 float read_from_sensor()
 {
@@ -92,14 +92,15 @@ void loop()
       {
         lcd.setCursor(3,0);
         lcd.print("FUEL USE ");
-        lcd.print(actual_expenditure);
+        lcd.print((actual_expenditure*SIZE_TANK)/100, 1);
       }
       else
       {
         lcd.setCursor(0,0);
         lcd.print("L FUEL USE ");
-        lcd.print(last_expenditure);
+        lcd.print((last_expenditure*SIZE_TANK)/100, 1);
       }
+      lcd.print(" l");
     }
     
     if (sensorVal == LOW) { // LOW = don't push button
