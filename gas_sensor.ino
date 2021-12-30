@@ -20,7 +20,7 @@ float last_expenditure = 0;
 //COSTANT
 int LED_PIN = 8;
 int SIZE_TANK = 32; // size of tank in liters
-float SAMPLING = 1*60; //size in seconds
+float SAMPLING = 15*60; //size in seconds
 
 float max_value = 90.3;
 float min_value = 2.4;
