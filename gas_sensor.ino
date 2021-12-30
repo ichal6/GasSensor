@@ -1,35 +1,38 @@
-
+// INCLUDES
 #include <Wire.h> // Library for I2C communication
 #include <LiquidCrystal_I2C.h>
 #include <math.h>
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
 
+//GLOBAL VALUES
 int Vin=5;        //voltage at 5V pin of arduino
 float Vout=0;     //voltage at A0 pin of arduino
-float R_reference =218;    //value of known resistance
-float R_sensor=0;       //value of unknown resistance
-int a2d_data=0;    
-float buffer=0;
+float R_reference=218;    //value of known resistance
+
 float value_percent = 0;
 float max_value = 89.91;
 float min_value = 1.93;
 float range_value = max_value - min_value;
 float last_val = 0;
+
 int sensorVal = LOW;
+
 unsigned long prev = 0;
 float actual_expenditure = 0;
-int LED_PIN = 8;
 float last_expenditure = 0;
+
+//COSTANT
+int LED_PIN = 8;
 int SIZE_TANK = 32; // size of tank in liters
 
 float read_from_sensor()
 {
-  a2d_data=analogRead(A0); // READ data from analog A0 port (0 - 1023)
+  float a2d_data=analogRead(A0); // READ data from analog A0 port (0 - 1023)
   
-  buffer=a2d_data*Vin;
+  float buffer=a2d_data*Vin;
   Vout=(buffer)/1024.0; // calculate out voltage
   buffer=Vout/(Vin-Vout); 
-  R_sensor=R_reference*buffer; // calculate unknown R2 from Ohm rule
+  float R_sensor=R_reference*buffer; // calculate unknown Resistor from Ohm rule
 
   return R_sensor;
 }
@@ -111,17 +114,20 @@ void setup()
 {
   lcd.init();
   lcd.backlight(); //turn on backlight
+  
   Serial.begin(9600); //start communication via UART with speed 9600 baud/sec (symbols/seconds)
+  
   pinMode(3, INPUT_PULLUP); //configure pin 3 as an output and active built in pull up resistor
   pinMode(LED_PIN, OUTPUT); //configure built in LED on board Arduino UNO
-  prev = millis();
-  float last_detect = read_from_sensor();
-  last_val = calculate_percent_expenditure(last_detect);
+  
+  prev = millis(); //initialize time measure
+  float last_detect = read_from_sensor();                //initialize first detect from sensor
+  last_val = calculate_percent_expenditure(last_detect); // 
 }
 
 void loop()
 {
-  R_sensor=read_from_sensor();
+  float R_sensor=read_from_sensor();
   value_percent = calculate_percent_expenditure(R_sensor);
 
   display_first_row();
