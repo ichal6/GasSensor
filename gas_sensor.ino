@@ -20,6 +20,22 @@ unsigned long prev = 0;
 float actual_expenditure = 0;
 int LED_PIN = 8;
 
+
+float read_from_sensor()
+{
+  a2d_data=analogRead(A0); // READ data from analog A0 port (0 - 1023)
+  
+  buffer=a2d_data*Vin;
+  Vout=(buffer)/1024.0; // calculate out voltage
+  //Serial.println(Vout);
+  buffer=Vout/(Vin-Vout); 
+  ///Serial.print("buffer = "); 
+  //Serial.println(buffer);
+  R_sensor=R_reference*buffer; // calculate unknown R2 from Ohm rule
+
+  return R_sensor;
+}
+
 void setup() 
 {
  lcd.init();
@@ -28,23 +44,16 @@ void setup()
  pinMode(3, INPUT_PULLUP); //configure pin 3 as an output and active built in pull up resistor
  pinMode(LED_PIN, OUTPUT); //configure built in LED on board Arduino UNO
  prev = millis();
+     
 }
 
 void loop()
 {
-  a2d_data=analogRead(A0); // READ data from analog A0 port (0 - 1023)
-     
-  if(a2d_data)
+
   {
-    buffer=a2d_data*Vin;
-    Vout=(buffer)/1024.0; // calculate out voltage
-    //Serial.println(Vout);
-    buffer=Vout/(Vin-Vout); 
-    ///Serial.print("buffer = "); 
-    //Serial.println(buffer);
-    R_sensor=R_reference*buffer; // calculate unknown R2 from Ohm rule
+    R_sensor=read_from_sensor();
     value_percent = ((R_sensor-min_value)/range_value)*100; //calculate actual fuel in percent
-    Serial.println(R_sensor);
+    // Serial.println(R_sensor);
     
     if( value_percent <= 8){
       digitalWrite(LED_PIN, HIGH);
@@ -71,7 +80,7 @@ void loop()
     lcd.clear();
   }
   sensorVal = digitalRead(3); //read button status
-  Serial.println(sensorVal);
+  // Serial.println(sensorVal);
 
   unsigned long now = millis();
 
