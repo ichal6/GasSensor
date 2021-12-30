@@ -63,22 +63,8 @@ void calculate_fluel_expenditure()
   }
 }
 
-void setup() 
+void display_first_row()
 {
-  lcd.init();
-  lcd.backlight(); //turn on backlight
-  Serial.begin(9600); //start communication via UART with speed 9600 baud/sec (symbols/seconds)
-  pinMode(3, INPUT_PULLUP); //configure pin 3 as an output and active built in pull up resistor
-  pinMode(LED_PIN, OUTPUT); //configure built in LED on board Arduino UNO
-  prev = millis();
-  float last_detect = read_from_sensor();
-  last_val = calculate_percent_expenditure(last_detect);
-}
-
-void loop()
-{
-  R_sensor=read_from_sensor();
-  value_percent = calculate_percent_expenditure(R_sensor);
   if( value_percent <= 8) // if fuel level is low
   {
     digitalWrite(LED_PIN, HIGH);
@@ -102,6 +88,26 @@ void loop()
     }
     lcd.print(" L");
   }
+}
+
+void setup() 
+{
+  lcd.init();
+  lcd.backlight(); //turn on backlight
+  Serial.begin(9600); //start communication via UART with speed 9600 baud/sec (symbols/seconds)
+  pinMode(3, INPUT_PULLUP); //configure pin 3 as an output and active built in pull up resistor
+  pinMode(LED_PIN, OUTPUT); //configure built in LED on board Arduino UNO
+  prev = millis();
+  float last_detect = read_from_sensor();
+  last_val = calculate_percent_expenditure(last_detect);
+}
+
+void loop()
+{
+  R_sensor=read_from_sensor();
+  value_percent = calculate_percent_expenditure(R_sensor);
+
+  display_first_row();
 
   if (sensorVal == LOW) { // LOW = button is pushing
     lcd.backlight();
