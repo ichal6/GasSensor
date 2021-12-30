@@ -78,7 +78,7 @@ void display_first_row()
     {
       lcd.setCursor(3,0);
       lcd.print("FUEL USE ");
-      lcd.print((actual_expenditure*SIZE_TANK)/100, 0);
+      lcd.print((actual_expenditure*SIZE_TANK)/100, 1);
     }
     else // display last expenditure (the wehicle is stop)
     {
@@ -88,6 +88,23 @@ void display_first_row()
     }
     lcd.print(" L");
   }
+}
+
+void display_second_row()
+{
+  if (sensorVal == LOW) { // LOW = button is pushing
+    lcd.backlight();
+      
+    lcd.setCursor(4,1);
+    lcd.print(round(value_percent));
+    lcd.print("\% FUEL");
+    
+    delay(4000);
+  } else {
+    lcd.noBacklight();
+  }
+  delay(300);
+  lcd.clear();  
 }
 
 void setup() 
@@ -108,21 +125,8 @@ void loop()
   value_percent = calculate_percent_expenditure(R_sensor);
 
   display_first_row();
+  display_second_row();
 
-  if (sensorVal == LOW) { // LOW = button is pushing
-    lcd.backlight();
-      
-    lcd.setCursor(4,1);
-    lcd.print(round(value_percent));
-    lcd.print("\% FUEL");
-    
-    delay(4000);
-  } else {
-    lcd.noBacklight();
-  }
-  delay(300);
-  lcd.clear();
-  
   sensorVal = digitalRead(3); //read button status
   calculate_fluel_expenditure();
  
