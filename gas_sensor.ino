@@ -55,6 +55,11 @@ void calculate_fluel_expenditure()
       last_expenditure = actual_expenditure;
       last_val = value_percent;  
     }
+    if(int(actual_expenditure) < 0)
+    {
+      float last_detect = read_from_sensor();
+      last_val = calculate_percent_expenditure(last_detect);
+    }
   }
 }
 
