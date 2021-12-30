@@ -46,7 +46,8 @@ void setup()
   pinMode(3, INPUT_PULLUP); //configure pin 3 as an output and active built in pull up resistor
   pinMode(LED_PIN, OUTPUT); //configure built in LED on board Arduino UNO
   prev = millis();
-  last_val = read_from_sensor();
+  float last_detect = read_from_sensor();
+  last_val = calculate_percent_expenditure(last_detect);
 }
 
 void loop()
@@ -86,11 +87,10 @@ void loop()
   unsigned long now = millis();
 
   if((now - prev)/1000 >= 2){
-    actual_expenditure = (last_val - R_sensor);
-    
+    actual_expenditure = (last_val - value_percent);
     Serial.print("Aktualne zuzycie: ");
     Serial.println(actual_expenditure);
     prev = now;
-    last_val = R_sensor;
+    last_val = value_percent;
   }
 }
