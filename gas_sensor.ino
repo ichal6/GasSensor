@@ -77,47 +77,47 @@ void setup()
 
 void loop()
 {
-
+  R_sensor=read_from_sensor();
+  value_percent = calculate_percent_expenditure(R_sensor);
+  if( value_percent <= 8) // if fuel level is low
   {
-    R_sensor=read_from_sensor();
-    value_percent = calculate_percent_expenditure(R_sensor);
-    
-    if( value_percent <= 8){
-      digitalWrite(LED_PIN, HIGH);
+    digitalWrite(LED_PIN, HIGH);
+    lcd.setCursor(3,0);
+    lcd.print("LOW FUEL!!!");
+  } 
+  else 
+  {
+    digitalWrite(LED_PIN, LOW);
+    if(int(actual_expenditure) > 0) // display actual expenditure (the wehicle is moving)
+    {
       lcd.setCursor(3,0);
-      lcd.print("LOW FUEL!!!");
-    } else{
-      digitalWrite(LED_PIN, LOW);
-      if(int(actual_expenditure) > 0)
-      {
-        lcd.setCursor(3,0);
-        lcd.print("FUEL USE ");
-        lcd.print((actual_expenditure*SIZE_TANK)/100, 1);
-      }
-      else
-      {
-        lcd.setCursor(0,0);
-        lcd.print("L FUEL USE ");
-        lcd.print((last_expenditure*SIZE_TANK)/100, 1);
-      }
-      lcd.print(" l");
+      lcd.print("FUEL USE ");
+      lcd.print((actual_expenditure*SIZE_TANK)/100, 0);
     }
-    
-    if (sensorVal == LOW) { // LOW = don't push button
-      lcd.backlight();
-        
-      lcd.setCursor(4,1);
-      lcd.print(round(value_percent));
-      lcd.print("\% FUEL");
-      delay(4000);
-    } else {
-      lcd.noBacklight();
+    else // display last expenditure (the wehicle is stop)
+    {
+      lcd.setCursor(0,0);
+      lcd.print("L. F. USE ");
+      lcd.print((last_expenditure*SIZE_TANK)/100, 1);
     }
-    delay(300);
-    lcd.clear();
+    lcd.print(" L");
   }
+
+  if (sensorVal == LOW) { // LOW = button is pushing
+    lcd.backlight();
+      
+    lcd.setCursor(4,1);
+    lcd.print(round(value_percent));
+    lcd.print("\% FUEL");
+    
+    delay(4000);
+  } else {
+    lcd.noBacklight();
+  }
+  delay(300);
+  lcd.clear();
+  
   sensorVal = digitalRead(3); //read button status
-  // Serial.println(sensorVal);
   calculate_fluel_expenditure();
  
 }
